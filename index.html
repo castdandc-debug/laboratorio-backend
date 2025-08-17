@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang='es'>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'/>
+  <title>Laboratorio Care</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f6f9;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #003366;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .logo img {
+      width: 150px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+    button {
+      background: #003366;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 5px;
+      width: 100%;
+    }
+    button:hover {
+      background: #002244;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #666;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class='container'>
+    <div class='logo'>
+      <img src='logo.png' alt='Logo Laboratorio Care' />
+    </div>
+    <h1>Laboratorio Care</h1>
+    <p style='text-align: center; color: #555;'>Ingrese el folio del paciente para descargar su informe.</p>
+
+    <div class='form-group'>
+      <label for='folio'>Folio del Paciente</label>
+      <input type='text' id='folio' placeholder='Ej: 250815001' />
+    </div>
+
+    <button onclick='descargarPDF()'>Descargar Informe PDF</button>
+  </div>
+
+  <div class='footer'>
+    <p>© 2025 Laboratorio CARE. Calidez en la toma, calidad en el resultado.</p>
+  </div>
+
+  <script>
+    function descargarPDF() {
+      const folio = document.getElementById('folio').value.trim();
+      if (!folio) {
+        alert('Por favor, ingrese un folio válido');
+        return;
+      }
+
+      // Cambia esta URL por tu URL en Render.com
+      const url = https://laboratorio-backend-e00k.onrender.com/api/reporte/\;
+      
+      fetch(url)
+        .then(res => {
+          if (res.ok) {
+            window.open(url, '_blank');
+          } else {
+            alert('Paciente no encontrado');
+          }
+        })
+        .catch(err => {
+          alert('Error al conectar con el servidor');
+        });
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,16 @@
+
+node_modules/
+.env
+*.log
+reportes/
+.DS_Store
+Thumbs.db
+*.jpg
+*.jpeg
+*.JPG
+*.png
+*.PNG
+*.gif
+*.bmp
+frontend/
+

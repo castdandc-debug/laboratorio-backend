@@ -1,10 +1,10 @@
-
-const { Paciente, Prueba, Resultado } = require('../models');
+const { Paciente, Prueba, Resultado, Usuario } = require('../models');
+const { verificarToken, verificarRol } = require('../utils/auth');
 const express = require('express');
 const router = express.Router();
 
-// POST /api/resultados - Registrar resultado
-router.post('/', async (req, res) => {
+// POST /api/resultados - Registrar resultado (solo químico o admin)
+router.post('/', verificarToken, verificarRol('quimico', 'administrador'), async (req, res) => {
   try {
     const { pacienteId, pruebaId, valor } = req.body;
 
@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
       return res.status(404).json({ error: 'Paciente o prueba no encontrados' });
     }
 
-    // Validar si est� fuera de rango (solo cuantitativas)
+    // Validar si está fuera de rango (solo cuantitativas)
     let fueraDeRango = false;
     if (prueba.tipoPrueba === 'cuantitativa' && prueba.valoresNormales) {
       const [min, max] = prueba.valoresNormales.split('-').map(Number);
@@ -23,7 +23,14 @@ router.post('/', async (req, res) => {
       fueraDeRango = isNaN(valorNum) ? false : (valorNum < min || valorNum > max);
     }
 
-    const resultado = await Resultado.create({ pacienteId, pruebaId, valor, fueraDeRango });
+    // Crear resultado con el usuario que lo registra
+    const resultado = await Resultado.create({
+      pacienteId,
+      pruebaId,
+      valor,
+      fueraDeRango,
+      usuarioId: req.usuario.id // ✅ Asocia el químico que registró
+    });
 
     res.status(201).json(resultado);
   } catch (error) {
@@ -32,12 +39,19 @@ router.post('/', async (req, res) => {
 });
 
 // GET /api/resultados/paciente/:id - Listar resultados de un paciente
-router.get('/paciente/:id', async (req, res) => {
+router.get('/paciente/:id', verificarToken, async (req, res) => {
   try {
     const resultados = await Resultado.findAll({
       where: { pacienteId: req.params.id },
       include: [
-        { model: Prueba, attributes: ['nombre', 'unidadMedida', 'valoresNormales', 'tipoPrueba'] }
+        { 
+          model: Prueba, 
+          attributes: ['nombre', 'unidadMedida', 'valoresNormales', 'tipoPrueba'] 
+        },
+        {
+          model: Usuario,
+          attributes: ['id', 'nombre', 'rol'] // ✅ Muestra quién registró cada resultado
+        }
       ],
       order: [['createdAt', 'ASC']]
     });
@@ -49,4 +63,3 @@ router.get('/paciente/:id', async (req, res) => {
 });
 
 module.exports = router;
-

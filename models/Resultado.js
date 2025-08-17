@@ -1,16 +1,29 @@
-
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   const Resultado = sequelize.define('Resultado', {
+    pacienteId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'paciente_id'
+    },
+    pruebaId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      field: 'prueba_id'
+    },
     valor: {
-      type: DataTypes.TEXT,
+      type: DataTypes.STRING,
       allowNull: false
     },
     fueraDeRango: {
       type: DataTypes.BOOLEAN,
-      allowNull: false,
       defaultValue: false
+    },
+    usuarioId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'usuario_id'
     }
   }, {
     tableName: 'resultados',
@@ -19,4 +32,3 @@ module.exports = (sequelize) => {
 
   return Resultado;
 };
-

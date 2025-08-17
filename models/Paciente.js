@@ -23,6 +23,13 @@ module.exports = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: false  // ? Este campo no puede ser null
     },
+    sexo: {  // ← Nuevo campo
+      type: DataTypes.STRING(10),
+      allowNull: true,
+      validate: {
+        isIn: [['Masculino', 'Femenino', 'Otro']]
+      }
+    },
     fechaRegistro: {
       type: DataTypes.DATEONLY,
       allowNull: false,

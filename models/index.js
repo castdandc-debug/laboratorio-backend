@@ -5,7 +5,7 @@ require('dotenv').config();
 const dbUrl = process.env.DB_URL;
 
 if (!dbUrl) {
-  console.error('? DB_URL no est� definida en .env');
+  console.error('? DB_URL no está definida en .env');
   process.exit(1);
 }
 
@@ -30,6 +30,8 @@ const Resultado = require('./Resultado')(sequelize);
 const PerfilPrueba = require('./PerfilPrueba')(sequelize);
 const PaquetePrueba = require('./PaquetePrueba')(sequelize);
 const PaquetePerfil = require('./PaquetePerfil')(sequelize);
+const Sucursal = require('./Sucursal')(sequelize);
+const Usuario = require('./Usuario')(sequelize);
 
 // --- Relaciones ---
 
@@ -69,7 +71,15 @@ Resultado.belongsTo(Paciente, { foreignKey: 'pacienteId' });
 Prueba.hasMany(Resultado, { foreignKey: 'pruebaId' });
 Resultado.belongsTo(Prueba, { foreignKey: 'pruebaId' });
 
-// --- Exportar ---
+// Paciente ? Sucursal
+Paciente.belongsTo(Sucursal, { foreignKey: 'sucursalId' });
+Sucursal.hasMany(Paciente, { foreignKey: 'sucursalId' });
+
+// Relación: Resultado → Usuario (quién registró el resultado)
+Resultado.belongsTo(Usuario, { foreignKey: 'usuarioId' });
+Usuario.hasMany(Resultado, { foreignKey: 'usuarioId' });
+
+// Exportar
 module.exports = { 
   sequelize, 
   Prueba, 
@@ -77,11 +87,14 @@ module.exports = {
   Paquete, 
   Paciente, 
   Pago, 
-  Resultado,
+  Resultado, 
+  Sucursal,
+  Usuario,
   PerfilPrueba, 
   PaquetePrueba, 
   PaquetePerfil 
 };
 
 console.log('? Modelos y relaciones cargados');
+
 

@@ -19,22 +19,27 @@ router.post('/', async (req, res) => {
       estudios
     } = req.body;
 
-    // ? Calcular edad aquí
+    // ? Calcular edad
     if (!fechaNacimiento) {
       return res.status(400).json({ error: 'La fecha de nacimiento es obligatoria' });
     }
 
     const edad = calcularEdad(fechaNacimiento);
 
-    // Generar folio
+    // ? Verificar si el folio ya existe
     const folio = await generarFolio(Paciente, req.context?.sequelize || require('../models').sequelize);
+    const existeFolio = await Paciente.findOne({ where: { folio } });
+    
+    if (existeFolio) {
+      return res.status(400).json({ error: 'El folio ya existe' });
+    }
 
-    // Crear paciente con edad calculada
+    // ? Crear paciente
     const paciente = await Paciente.create({
       nombreCompleto,
       folio,
       fechaNacimiento,
-      edad,  // ? Pasamos la edad calculada
+      edad,
       diagnostico,
       medicoSolicita,
       tratamiento,
@@ -42,7 +47,7 @@ router.post('/', async (req, res) => {
       sucursalId
     });
 
-    // Asociar estudios
+    // ? Asociar estudios
     if (estudios) {
       const { pruebas, perfiles, paquetes } = estudios;
 
@@ -51,12 +56,13 @@ router.post('/', async (req, res) => {
       if (paquetes?.length) await paciente.addPaquetes(paquetes);
     }
 
-    // Obtener paciente completo
+    // ? Obtener paciente completo
     const pacienteCompleto = await Paciente.findByPk(paciente.id, {
       include: [
         { model: Prueba, attributes: ['id', 'clave', 'nombre'] },
         { model: Perfil, attributes: ['id', 'nombre'] },
-        { model: Paquete, attributes: ['id', 'nombre'] }
+        { model: Paquete, attributes: ['id', 'nombre'] },
+        { model: require('../models').Sucursal }
       ]
     });
 
@@ -77,7 +83,8 @@ router.get('/', async (req, res) => {
       include: [
         { model: Prueba, attributes: ['id', 'clave', 'nombre'] },
         { model: Perfil, attributes: ['id', 'nombre'] },
-        { model: Paquete, attributes: ['id', 'nombre'] }
+        { model: Paquete, attributes: ['id', 'nombre'] },
+        { model: require('../models').Sucursal }
       ],
       order: [['createdAt', 'DESC']]
     });
@@ -95,7 +102,8 @@ router.get('/folio/:folio', async (req, res) => {
       include: [
         { model: Prueba, attributes: ['id', 'clave', 'nombre', 'unidadMedida', 'valoresNormales', 'tipoPrueba'] },
         { model: Perfil, attributes: ['id', 'nombre'] },
-        { model: Paquete, attributes: ['id', 'nombre'] }
+        { model: Paquete, attributes: ['id', 'nombre'] },
+        { model: require('../models').Sucursal }
       ]
     });
 
