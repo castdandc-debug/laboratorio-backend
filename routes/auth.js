@@ -1,3 +1,4 @@
+
 const { Usuario } = require('../models');
 const { generarToken } = require('../utils/auth');
 const bcrypt = require('bcrypt');
@@ -35,3 +36,4 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
+
