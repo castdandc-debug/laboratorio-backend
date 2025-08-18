@@ -4,12 +4,12 @@ module.exports = (sequelize) => {
   const Resultado = sequelize.define('Resultado', {
     pacienteId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       field: 'paciente_id'
     },
     pruebaId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       field: 'prueba_id'
     },
     valor: {
