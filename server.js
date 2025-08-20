@@ -1,4 +1,3 @@
-
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
@@ -17,12 +16,14 @@ const sucursalesRoutes = require('./routes/sucursales');
 const authRoutes = require('./routes/auth');
 const usuariosRoutes = require('./routes/usuarios');
 
+// ✅ Debes declarar 'app' ANTES de usarlo
 const app = express();
+
 const PORT = process.env.PORT || 5000;
 
 // Middlewares
 app.use(cors({
-  origin: ['https://castdandc-debug.github.io', 'http://localhost:5000'],
+  origin: ['https://castdandc-debug.github.io', 'http://localhost:5000'], // ✅ Corregido: sin espacios extra
   credentials: true
 }));
 app.use(morgan('dev'));
@@ -39,20 +40,20 @@ app.get('/', (req, res) => {
   res.json({ mensaje: 'Servidor del Laboratorio Clinico funcionando correctamente' });
 });
 
-// Ruta para probar conexi n a BD
+// Ruta para probar conexión a BD
 app.get('/test-db', async (req, res) => {
   try {
     await sequelize.authenticate();
     res.json({ mensaje: 'Conexion a BD exitosa' });
   } catch (error) {
-    res.status(500).json({ 
-      error: 'Error al conectar a BD', 
-      detalle: error.message 
+    res.status(500).json({
+      error: 'Error al conectar a BD',
+      detalle: error.message
     });
   }
 });
 
-// Ruta de diagn stico
+// Ruta de diagnóstico
 app.get('/debug', (req, res) => {
   res.json({
     Prueba: !!Prueba,
